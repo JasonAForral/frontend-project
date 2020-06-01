@@ -1,38 +1,77 @@
 "use strict";
 
+// This is the main API to gather initial data
 const stapi = "http://stapi.co/api/v1/rest/";
 
+// These are the initial 
 const init = {
   method: "GET",
   mode: "cors",
   cache: "default",
 };
 
+// selection to choose colors from
 const fillColors = ["#933", "#963", "#033"];
 
+/**
+ * get Fill Color helper function to choose a color based on an index value
+ * @param {Number} index value to take modulus
+ */
 function getFillColor(index) {
   return fillColors[index % fillColors.length];
 }
 
-// var domResults = document.getElementById("results");
+// canvas context elements
 var ctxSeasons = document.getElementById("season-episodes").getContext("2d");
 var ctxWeapons = document.getElementById("weapon-properties").getContext("2d");
 
-async function getPages(thing, pages) {
-  for (let i = 1; i < pages; ++i) {}
-}
-
+/**
+ * API caller function returns a promise with data
+ * @param {string} query query information
+ */
 async function callSTAPI(query) {
   let response = await fetch(stapi + query, init);
   return await response.json();
 }
 
+/**
+ * setup Seasons calls API for season information and displays on chart
+ */
 async function setupSeasons() {
   let results = await callSTAPI("season/search?sort=title,ASC");
   console.log(results);
-  return makeChart(results.seasons);
+  return makeSeasonsChart(results.seasons);
 }
 
+/**
+ * make Seasons Chart
+ * @param {Object} data Object containing season data to display on chart
+ */
+function makeSeasonsChart(data) {
+
+  const chartData = {
+    datasets: [
+      {
+        label: "Episodes",
+        data: data.map((season) => season.numberOfEpisodes),
+        borderWidth: 1,
+        backgroundColor: data.map((season, i) => getFillColor(i)),
+      },
+    ],
+    labels: data.map((season) => season.title),
+  };
+
+  let config = {
+    type: "bar",
+    data: chartData,
+  };
+
+  return new Chart(ctxSeasons, config);
+}
+
+/**
+ * setup Weapons calls API for season information and displays on chart
+ */
 async function setupWeapons() {
   let results = await callSTAPI("weapon/search?sort=uid,ASC");
   const { weapons, page } = results;
@@ -140,27 +179,10 @@ async function setupWeapons() {
   return weapons;
 }
 
-function makeChart(data) {
-  const chartData = {
-    datasets: [
-      {
-        label: "Episodes",
-        data: data.map((season) => season.numberOfEpisodes),
-        borderWidth: 1,
-        backgroundColor: data.map((season, i) => getFillColor(i)),
-      },
-    ],
-    labels: data.map((season) => season.title),
-  };
-
-  let config = {
-    type: "bar",
-    data: chartData,
-  };
-
-  return new Chart(ctxSeasons, config);
-}
-
+/**
+ * init Async initializes data by calling fetch functions then
+ * awaits arival
+ */
 async function initAsync() {
   let seasonsPromise = setupSeasons();
   let weaponsPromise = setupWeapons();
