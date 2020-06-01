@@ -97,24 +97,30 @@ async function setupWeapons() {
     if (key.indexOf("Technology") > 0) technologies[key] = aggregateData[key];
   }
 
-  console.log('tech', technologies)
-
-  let datasets = [];
+  console.log("tech", technologies);
 
   let keys = Object.keys(technologies);
 
-  for (let i = 0; i < keys.length; ++i) {
-    let key = keys[i];
-    datasets.push({
-      label: key,
-      data: [aggregateData[key]],
-      backgroundColor: getFillColor(i),
-    });
-  }
+  let datasets = [
+    {
+      label: "Weapon Types",
+      data: keys.map((key) => technologies[key]),
+      backgroundColor: keys.map((key, i) => getFillColor(i)),
+    },
+  ];
+
+  // for (let i = 0; i < keys.length; ++i) {
+  //   let key = keys[i];
+  //   datasets.push({
+  //     label: key,
+  //     data: [aggregateData[key]],
+  //     backgroundColor: getFillColor(i),
+  //   });
+  // }
 
   const chartData = {
-    lables: keys,
-    datasets: datasets,
+    labels: keys,
+    datasets,
   };
 
   let config = {
