@@ -3,7 +3,7 @@
 // This is the main API to gather initial data
 const stapi = "http://stapi.co/api/v1/rest/";
 
-// These are the initial 
+// These are the initial
 const init = {
   method: "GET",
   mode: "cors",
@@ -11,7 +11,17 @@ const init = {
 };
 
 // selection to choose colors from
-const fillColors = ["#933", "#963", "#033"];
+const fillColors = [
+  "#933",
+  "#963",
+  "#033",
+  "#c66",
+  "#c96",
+  "#366",
+  "#f99",
+  "#fc9",
+  "#699",
+];
 
 /**
  * get Fill Color helper function to choose a color based on an index value
@@ -48,22 +58,69 @@ async function setupSeasons() {
  * @param {Object} data Object containing season data to display on chart
  */
 function makeSeasonsChart(data) {
+  let maxSeasons = 0;
+
+  const datasets = data.reduce((acc, curr) => {
+    // get series title
+    const title = curr.series.title;
+
+    // check if title exists in the datasets
+    let index = acc.findIndex((item) => item.label === title);
+    if (index < 0) {
+      // setup new series dataset
+      index = acc.length;
+      acc[index] = {
+        label: title,
+        data: [],
+        borderColor: getFillColor(index),
+
+        bacgroundColor: getFillColor(index),
+        fill: false,
+      };
+    }
+
+    // add data to dataset
+    const seasonNumber = curr.seasonNumber;
+    acc[index].data[seasonNumber - 1] = curr.numberOfEpisodes;
+
+    // keep track of max season
+    if (seasonNumber > maxSeasons) maxSeasons = seasonNumber;
+
+    return acc;
+  }, []);
 
   const chartData = {
-    datasets: [
-      {
-        label: "Episodes",
-        data: data.map((season) => season.numberOfEpisodes),
-        borderWidth: 1,
-        backgroundColor: data.map((season, i) => getFillColor(i)),
-      },
-    ],
-    labels: data.map((season) => season.title),
+    datasets,
+    labels: new Array(maxSeasons).fill(0).map((n, i) => `Season ${i + 1}`),
   };
 
   let config = {
-    type: "bar",
+    type: "line",
     data: chartData,
+    options: {
+      tooltips: { mode: "nearest", intersect: false },
+      scales: {
+        yAxes: [
+          {
+            ticks: {
+              beginAtZero: true,
+            },
+            scaleLabel: {
+              display: true,
+              labelString: "Episodes",
+            },
+          },
+        ],
+        xAxes: [
+          {
+            scaleLabel: {
+              display: true,
+              labelString: "Season of Series",
+            },
+          },
+        ],
+      },
+    },
   };
 
   return new Chart(ctxSeasons, config);
@@ -77,6 +134,8 @@ async function setupWeapons() {
   const { weapons, page } = results;
   const { lastPage, totalPages } = page;
   console.log("total weapons", page.totalElements);
+
+  // if this is not the last page, query other pages
   if (!lastPage) {
     const pagePromises = [];
     for (var i = 1; i < totalPages; ++i) {
@@ -84,6 +143,8 @@ async function setupWeapons() {
         callSTAPI("weapon/search?sort=uid,ASC&pageNumber=" + i)
       );
     }
+
+    // wait for all the pages to load
     const otherPages = await Promise.all(pagePromises);
     console.log("other pages", otherPages);
     for (let otherPage of otherPages) {
