@@ -34,6 +34,7 @@ function getFillColor(index) {
 // canvas context elements
 let ctxSeasons = document.getElementById("season-episodes").getContext("2d");
 let ctxWeapons = document.getElementById("weapon-properties").getContext("2d");
+let ctxHandheld = document.getElementById("weapon-handheld").getContext("2d");
 
 /**
  * API caller function returns a promise with data
@@ -175,7 +176,7 @@ async function setupWeapons() {
 
     if (numTech > 1) {
       ++acc.multipleTech;
-      console.log("multiple tech", curr);
+      // console.log("multiple tech", curr);
       // } else if (numTech === 0) {
       // ++acc.noTech;
       // console.log("no tech", curr);
@@ -188,36 +189,117 @@ async function setupWeapons() {
     return acc;
   }, aggregateData);
 
-  let technologies = {};
+  //#region weapon tech
+  {
+    let technologies = {};
 
-  for (let key in aggregateData) {
-    if (key.indexOf("Technology") > 0) technologies[key] = aggregateData[key];
-  }
+    // filter keys that include technology
+    for (let key in aggregateData) {
+      if (key.indexOf("Technology") > 0) technologies[key] = aggregateData[key];
+    }
 
-  let keys = Object.keys(technologies);
+    let keys = Object.keys(technologies);
 
-  let datasets = keys.map((key, i) => ({
-    label: key,
-    data: [technologies[key]],
-    backgroundColor: getFillColor(i),
-  }))
+    let datasets = keys.map((key, i) => ({
+      label: key,
+      data: [technologies[key]],
+      backgroundColor: getFillColor(i),
+    }));
 
-  const chartData = {
-    labels: ['Weapon Models'],
-    datasets,
-  };
+    const chartData = {
+      labels: ["Weapon Models"],
+      datasets,
+    };
 
-  let config = {
-    type: "bar",
-    data: chartData,
-    options: {
-      legend: {
-        position: "bottom",
+    let config = {
+      type: "bar",
+      data: chartData,
+      options: {
+        legend: {
+          position: "top",
+        },
       },
-    },
-  };
+    };
 
-  new Chart(ctxWeapons, config);
+    new Chart(ctxWeapons, config);
+  }
+  //#endregion
+
+  //#region weapon handheld
+  {
+    // let technologies = {};
+
+    // // filter keys that include technology
+    // for (let key in aggregateData) {
+    //   if (key.indexOf("Technology") > 0) technologies[key] = aggregateData[key];
+    // }
+
+    // let keys = Object.keys(technologies);
+
+    // let datasets = keys.map((key, i) => ({
+    //   label: key,
+    //   data: [technologies[key]],
+    //   backgroundColor: getFillColor(i),
+    // }));
+
+    console.log(weapons);
+
+    const datasets = weapons.reduce(
+      (acc, curr) => {
+        // get series title
+        // const title = curr.series.title;
+
+        // // check if title exists in the datasets
+        // let index = acc.findIndex((item) => item.label === title);
+        // if (index < 0) {
+        //   // setup new series dataset
+        //   index = acc.length;
+        //   acc[index] = {
+        //     label: title,
+        //     data: [],
+        //     borderColor: getFillColor(index),
+
+        //     bacgroundColor: getFillColor(index),
+        //     fill: false,
+        //   };
+        // }
+
+        // // add data to dataset
+        // const seasonNumber = curr.seasonNumber;
+        // acc[index].data[seasonNumber - 1] = curr.numberOfEpisodes;
+
+        // // keep track of max season
+        // if (seasonNumber > maxSeasons) maxSeasons = seasonNumber;
+
+        ++(acc[Number(curr.handHeldWeapon)])
+
+        return acc;
+      },
+      [0,0]
+    );
+
+    console.log(datasets);
+
+    const chartData = {
+      labels: ["Not Handheld", "Handheld"],
+      datasets: [{
+        data: datasets,
+        backgroundColor: [getFillColor(0), getFillColor(1)],
+      }]
+    };
+
+    let config = {
+      type: "pie",
+      data: chartData,
+      options: {
+        legend: {
+          position: "top",
+        },
+      },
+    };
+
+    new Chart(ctxHandheld, config);
+  }
 
   return weapons;
 }

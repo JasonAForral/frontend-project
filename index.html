@@ -16,30 +16,38 @@
     <main class="main">
       <h1 class="h2">Star Trek Dashboard</h1>
       <div class="row">
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <nav class="col-md-2 col-lg-1 d-none d-md-block bg-light sidebar">
           <div class="sidebar"></div>
         </nav>
         <!-- Seasons -->
-        <section id="seasons" class="col-md-8">
+        <section id="seasons" class="col-md-10 col-lg-4">
           <h2 class="h2">Episodes Per Season</h2>
           <div>
             <canvas id="season-episodes"></canvas>
           </div>
         </section>
-      </div><!-- /row -->
 
-      <div class="row">
-      </div><!-- /row -->
-
-      <div class="row">
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
           <div class="sidebar"></div>
         </nav>
         <!-- Weapons -->
-        <section id="weapons" class="col-md-8">
+        <section id="weapons" class="col-md-10 col-lg-4">
           <h2 class="h2">Weapon Models per Technologies</h2>
           <div class="chart-container">
             <canvas id="weapon-properties"></canvas>
+          </div>
+        </section>
+      </div><!-- /row -->
+
+      <div class="row">
+        <nav class="col-md-2 col-lg-1 d-none d-md-block bg-light sidebar">
+          <div class="sidebar"></div>
+        </nav>
+        <!-- Weapons -->
+        <section id="weapons2" class="col-md-10 col-lg-4">
+          <h2 class="h2">Handheld</h2>
+          <div class="chart-container">
+            <canvas id="weapon-handheld"></canvas>
           </div>
         </section>
       </div><!-- /row -->
@@ -65,6 +73,9 @@
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#weapons">Weapons</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#weapons2">Handheld</a>
         </li>
       </ul>
     </div>
