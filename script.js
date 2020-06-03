@@ -35,11 +35,6 @@ function getFillColor(index) {
 let ctxSeasons = document.getElementById("season-episodes").getContext("2d");
 let ctxWeapons = document.getElementById("weapon-properties").getContext("2d");
 
-// season filter form
-// const seasonFiltersForm = document.getElementById("season-filters");
-const seasonFilters = [];
-// const seasonFilterList = seasonFiltersForm.firstElementChild;
-
 /**
  * API caller function returns a promise with data
  * @param {string} query query information
@@ -54,7 +49,6 @@ async function callSTAPI(query) {
  */
 async function setupSeasons() {
   let results = await callSTAPI("season/search?sort=title,ASC");
-  console.log(results);
   return makeSeasonsChart(results.seasons);
 }
 
@@ -93,25 +87,6 @@ function makeSeasonsChart(data) {
 
     return acc;
   }, []);
-
-  // TODO: add filter form
-  // for (let dataset of datasets) {
-  //   const title = dataset.label;
-  //   const checkbox = document.createElement("input");
-  //   const label = document.createElement("label");
-  //   checkbox.setAttribute("type", "checkbox");
-  //   checkbox.id = title;
-  //   checkbox.name = title;
-  //   checkbox.setAttribute("class", "checkbox");
-  //   checkbox.setAttribute("checked", "");
-  //   label.setAttribute("for", title);
-  //   label.textContent = title;
-  //   seasonFilters.push(checkbox);
-
-  //   const li = document.createElement("li");
-  //   li.append(checkbox, " ", label);
-  //   seasonFilterList.append(li);
-  // }
 
   const chartData = {
     datasets,
@@ -158,7 +133,6 @@ async function setupWeapons() {
   let results = await callSTAPI("weapon/search?sort=uid,ASC");
   const { weapons, page } = results;
   const { lastPage, totalPages } = page;
-  console.log("total weapons", page.totalElements);
 
   // if this is not the last page, query other pages
   if (!lastPage) {
@@ -171,7 +145,6 @@ async function setupWeapons() {
 
     // wait for all the pages to load
     const otherPages = await Promise.all(pagePromises);
-    console.log("other pages", otherPages);
     for (let otherPage of otherPages) {
       weapons.push(...otherPage.weapons);
     }
@@ -212,7 +185,6 @@ async function setupWeapons() {
     acc.phaserTechnology += curr.phaserTechnology;
     acc.photonicTechnology += curr.photonicTechnology;
     acc.plasmaTechnology += curr.plasmaTechnology;
-    // acc.multipleTech +=
     return acc;
   }, aggregateData);
 
@@ -222,29 +194,16 @@ async function setupWeapons() {
     if (key.indexOf("Technology") > 0) technologies[key] = aggregateData[key];
   }
 
-  console.log("tech", technologies);
-
   let keys = Object.keys(technologies);
 
-  let datasets = [
-    {
-      label: "Weapon Types",
-      data: keys.map((key) => technologies[key]),
-      backgroundColor: keys.map((key, i) => getFillColor(i)),
-    },
-  ];
-
-  // for (let i = 0; i < keys.length; ++i) {
-  //   let key = keys[i];
-  //   datasets.push({
-  //     label: key,
-  //     data: [aggregateData[key]],
-  //     backgroundColor: getFillColor(i),
-  //   });
-  // }
+  let datasets = keys.map((key, i) => ({
+    label: key,
+    data: [technologies[key]],
+    backgroundColor: getFillColor(i),
+  }))
 
   const chartData = {
-    labels: keys,
+    labels: ['Weapon Models'],
     datasets,
   };
 
@@ -260,8 +219,6 @@ async function setupWeapons() {
 
   new Chart(ctxWeapons, config);
 
-  console.log("aggregate weapon data", aggregateData);
-
   return weapons;
 }
 
@@ -274,10 +231,6 @@ async function initAsync() {
   let weaponsPromise = setupWeapons();
 
   let charts = await Promise.all([seasonsPromise, weaponsPromise]);
-
-  // let seasons = await seasonsPromise
-
-  console.log(charts);
 }
 
 initAsync();
