@@ -151,46 +151,46 @@ async function setupWeapons() {
     }
   }
 
-  let aggregateData = {
-    alternateReality: 0,
-    handHeldWeapon: 0,
-    laserTechnology: 0,
-    mirror: 0,
-    phaserTechnology: 0,
-    photonicTechnology: 0,
-    plasmaTechnology: 0,
-    multipleTech: 0,
-    // noTech: 0,
-  };
-
-  aggregateData = weapons.reduce((acc, curr) => {
-    acc.alternateReality += curr.alternateReality;
-    acc.handHeldWeapon += curr.handHeldWeapon;
-    acc.mirror += curr.mirror;
-
-    const numTech =
-      curr.laserTechnology +
-      curr.phaserTechnology +
-      curr.photonicTechnology +
-      curr.plasmaTechnology;
-
-    if (numTech > 1) {
-      ++acc.multipleTech;
-      // console.log("multiple tech", curr);
-      // } else if (numTech === 0) {
-      // ++acc.noTech;
-      // console.log("no tech", curr);
-    }
-
-    acc.laserTechnology += curr.laserTechnology;
-    acc.phaserTechnology += curr.phaserTechnology;
-    acc.photonicTechnology += curr.photonicTechnology;
-    acc.plasmaTechnology += curr.plasmaTechnology;
-    return acc;
-  }, aggregateData);
-
   //#region weapon tech
-  {
+  async function makeWeaponsChart(weapons) {
+    let aggregateData = {
+      alternateReality: 0,
+      handHeldWeapon: 0,
+      laserTechnology: 0,
+      mirror: 0,
+      phaserTechnology: 0,
+      photonicTechnology: 0,
+      plasmaTechnology: 0,
+      multipleTech: 0,
+      // noTech: 0,
+    };
+
+    aggregateData = weapons.reduce((acc, curr) => {
+      acc.alternateReality += curr.alternateReality;
+      acc.handHeldWeapon += curr.handHeldWeapon;
+      acc.mirror += curr.mirror;
+
+      const numTech =
+        curr.laserTechnology +
+        curr.phaserTechnology +
+        curr.photonicTechnology +
+        curr.plasmaTechnology;
+
+      if (numTech > 1) {
+        ++acc.multipleTech;
+        // console.log("multiple tech", curr);
+        // } else if (numTech === 0) {
+        // ++acc.noTech;
+        // console.log("no tech", curr);
+      }
+
+      acc.laserTechnology += curr.laserTechnology;
+      acc.phaserTechnology += curr.phaserTechnology;
+      acc.photonicTechnology += curr.photonicTechnology;
+      acc.plasmaTechnology += curr.plasmaTechnology;
+      return acc;
+    }, aggregateData);
+
     let technologies = {};
 
     // filter keys that include technology
@@ -207,7 +207,7 @@ async function setupWeapons() {
     }));
 
     const chartData = {
-      labels: ["Weapon Models"],
+      labels: ["Weapon Technologies"],
       datasets,
     };
 
@@ -215,77 +215,57 @@ async function setupWeapons() {
       type: "bar",
       data: chartData,
       options: {
+        aspectRatio: 1,
         legend: {
           position: "top",
+        },
+        scales: {
+          yAxes: [
+            {
+              ticks: {
+                beginAtZero: true,
+              },
+              scaleLabel: {
+                display: true,
+                labelString: "Weapon Models",
+              },
+            },
+          ],
+          xAxes: [
+            {
+              scaleLabel: {
+                display: true,
+                labelString: "Weapon Technologies",
+              },
+            },
+          ],
         },
       },
     };
 
     new Chart(ctxWeapons, config);
   }
+  makeWeaponsChart(weapons);
   //#endregion
 
   //#region weapon handheld
   {
-    // let technologies = {};
-
-    // // filter keys that include technology
-    // for (let key in aggregateData) {
-    //   if (key.indexOf("Technology") > 0) technologies[key] = aggregateData[key];
-    // }
-
-    // let keys = Object.keys(technologies);
-
-    // let datasets = keys.map((key, i) => ({
-    //   label: key,
-    //   data: [technologies[key]],
-    //   backgroundColor: getFillColor(i),
-    // }));
-
-    console.log(weapons);
-
     const datasets = weapons.reduce(
       (acc, curr) => {
-        // get series title
-        // const title = curr.series.title;
-
-        // // check if title exists in the datasets
-        // let index = acc.findIndex((item) => item.label === title);
-        // if (index < 0) {
-        //   // setup new series dataset
-        //   index = acc.length;
-        //   acc[index] = {
-        //     label: title,
-        //     data: [],
-        //     borderColor: getFillColor(index),
-
-        //     bacgroundColor: getFillColor(index),
-        //     fill: false,
-        //   };
-        // }
-
-        // // add data to dataset
-        // const seasonNumber = curr.seasonNumber;
-        // acc[index].data[seasonNumber - 1] = curr.numberOfEpisodes;
-
-        // // keep track of max season
-        // if (seasonNumber > maxSeasons) maxSeasons = seasonNumber;
-
-        ++(acc[Number(curr.handHeldWeapon)])
-
+        ++acc[Number(curr.handHeldWeapon)];
         return acc;
       },
-      [0,0]
+      [0, 0]
     );
-
-    console.log(datasets);
 
     const chartData = {
       labels: ["Not Handheld", "Handheld"],
-      datasets: [{
-        data: datasets,
-        backgroundColor: [getFillColor(0), getFillColor(1)],
-      }]
+      datasets: [
+        {
+          data: datasets,
+          backgroundColor: [getFillColor(0), getFillColor(1)],
+        },
+      ],
     };
 
     let config = {
@@ -300,6 +280,7 @@ async function setupWeapons() {
 
     new Chart(ctxHandheld, config);
   }
+  //#endregion
 
   return weapons;
 }
