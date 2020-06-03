@@ -11,25 +11,67 @@
 </head>
 
 <body>
-  <div class="container">
-    <header>
-      <h1>Star Trek Dashboard</h1>
-    </header>
+  <!-- Main container -->
+  <div class="container-fluid">
     <main class="main">
+      <h1 class="h2">Star Trek Dashboard</h1>
       <div class="row">
-        <section class="col-md-12">
-          <h2>Episodes Per Season</h2>
-          <canvas id="season-episodes"></canvas>
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar"></div>
+        </nav>
+        <!-- Seasons -->
+        <section id="seasons" class="col-md-8">
+          <h2 class="h2">Episodes Per Season</h2>
+          <div>
+            <canvas id="season-episodes"></canvas>
+          </div>
         </section>
-        <section class="col-md-6">
-          <h2>Weapon Types per Technologies</h2>
-          <canvas id="weapon-properties"></canvas>
+      </div><!-- /row -->
+
+      <div class="row">
+      </div><!-- /row -->
+
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar"></div>
+        </nav>
+        <!-- Weapons -->
+        <section id="weapons" class="col-md-8">
+          <h2 class="h2">Weapon Types per Technologies</h2>
+          <div class="chart-container">
+            <canvas id="weapon-properties"></canvas>
+          </div>
         </section>
-      </div>
+      </div><!-- /row -->
     </main>
   </div>
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.16.0/d3.min.js"></script> -->
 
+  <div class="row">
+  </div><!-- /row -->
+
+  <!-- Bottom Navbar -->
+  <nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">Frontend</a>
+    <!-- sandwich button -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <!-- nav items -->
+    <div class="navbar-collapse collapse" id="navbarCollapse">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="#seasons">Seasons</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#weapons">Weapons</a>
+        </li>
+      </ul>
+    </div>
+
+  </nav>
+
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.16.0/d3.min.js"></script> -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
     integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
     crossorigin="anonymous"></script>

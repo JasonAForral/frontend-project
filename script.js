@@ -32,8 +32,13 @@ function getFillColor(index) {
 }
 
 // canvas context elements
-var ctxSeasons = document.getElementById("season-episodes").getContext("2d");
-var ctxWeapons = document.getElementById("weapon-properties").getContext("2d");
+let ctxSeasons = document.getElementById("season-episodes").getContext("2d");
+let ctxWeapons = document.getElementById("weapon-properties").getContext("2d");
+
+// season filter form
+// const seasonFiltersForm = document.getElementById("season-filters");
+const seasonFilters = [];
+// const seasonFilterList = seasonFiltersForm.firstElementChild;
 
 /**
  * API caller function returns a promise with data
@@ -89,6 +94,25 @@ function makeSeasonsChart(data) {
     return acc;
   }, []);
 
+  // TODO: add filter form
+  // for (let dataset of datasets) {
+  //   const title = dataset.label;
+  //   const checkbox = document.createElement("input");
+  //   const label = document.createElement("label");
+  //   checkbox.setAttribute("type", "checkbox");
+  //   checkbox.id = title;
+  //   checkbox.name = title;
+  //   checkbox.setAttribute("class", "checkbox");
+  //   checkbox.setAttribute("checked", "");
+  //   label.setAttribute("for", title);
+  //   label.textContent = title;
+  //   seasonFilters.push(checkbox);
+
+  //   const li = document.createElement("li");
+  //   li.append(checkbox, " ", label);
+  //   seasonFilterList.append(li);
+  // }
+
   const chartData = {
     datasets,
     labels: new Array(maxSeasons).fill(0).map((n, i) => `Season ${i + 1}`),
@@ -98,6 +122,7 @@ function makeSeasonsChart(data) {
     type: "line",
     data: chartData,
     options: {
+      aspectRatio: 1,
       tooltips: { mode: "nearest", intersect: false },
       scales: {
         yAxes: [
