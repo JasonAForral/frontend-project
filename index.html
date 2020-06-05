@@ -14,40 +14,59 @@
   <!-- Main container -->
   <div class="container-fluid">
     <main class="main">
-      <h1 class="h2">Star Trek Dashboard</h1>
+      <div class="jumbotron">
+        <h1 class="h2">Star Trek Dashboard</h1>
+      </div>
       <div class="row">
-        <nav class="col-md-2 col-lg-1 d-none d-md-block bg-light sidebar">
+        <!-- <nav class="col-md-2 col-lg-1 d-none d-md-block sidebar">
           <div class="sidebar"></div>
-        </nav>
+        </nav> -->
         <!-- Seasons -->
-        <section id="seasons" class="col-md-10 col-lg-4">
-          <h2 class="h2">Episodes Per Season</h2>
-          <div>
-            <canvas id="season-episodes"></canvas>
+        <section id="seasons" class="col-md-12 col-lg-6">
+          <div class="jumbotron m-2">
+            <h2 class="h2 card-title">Episodes Per Season</h2>
+            <div class="chart-container">
+              <canvas id="season-episodes"></canvas>
+            </div>
           </div>
         </section>
 
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <!-- <nav class="col-md-2 col-lg-1 d-none d-md-block sidebar">
           <div class="sidebar"></div>
-        </nav>
+        </nav> -->
         <!-- Weapons -->
-        <section id="weapons" class="col-md-10 col-lg-4">
-          <h2 class="h2">Weapon Models per Technologies</h2>
-          <div class="chart-container">
-            <canvas id="weapon-properties"></canvas>
+        <section id="weapons" class="col-md-12 col-lg-6">
+          <div class="jumbotron m-2">
+            <h2 class="h2">Weapon Technologies</h2>
+            <div class="chart-container">
+              <canvas id="weapon-properties"></canvas>
+            </div>
           </div>
         </section>
       </div><!-- /row -->
 
       <div class="row">
-        <nav class="col-md-2 col-lg-1 d-none d-md-block bg-light sidebar">
+        <!-- <nav class="col-md-2 col-lg-1 d-none d-md-block sidebar">
           <div class="sidebar"></div>
-        </nav>
+        </nav> -->
+        <div class="figure col-md-6">
+          <figure class="card jumbotron m-2">
+            <img
+              src="https://vignette.wikia.nocookie.net/memoryalpha/images/9/91/Type_2_phaser%2C_TOS.jpg/revision/latest?cb=20090204213448&path-prefix=en"
+              alt="Type 2 Phaser" class="img img-cover">
+              <figcaption class="figure-caption">Type 2 Phaser</figcaption>
+          </figure>
+        </div>
+        <!-- <nav class="col-md-2 col-lg-1 d-none d-md-block sidebar">
+          <div class="sidebar"></div>
+        </nav> -->
         <!-- Weapons -->
-        <section id="weapons2" class="col-md-10 col-lg-4">
-          <h2 class="h2">Handheld</h2>
-          <div class="chart-container">
-            <canvas id="weapon-handheld"></canvas>
+        <section id="weapons2" class="col-md-12 col-lg-6">
+          <div class="jumbotron m-2">
+            <h2 class="h2 card-title">Handheld Weapons</h2>
+            <div class="chart-container">
+              <canvas id="weapon-handheld"></canvas>
+            </div>
           </div>
         </section>
       </div><!-- /row -->

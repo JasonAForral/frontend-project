@@ -272,6 +272,7 @@ async function setupWeapons() {
       type: "pie",
       data: chartData,
       options: {
+        aspectRatio: 1,
         legend: {
           position: "top",
         },
