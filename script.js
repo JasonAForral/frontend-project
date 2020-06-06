@@ -36,6 +36,75 @@ let ctxSeasons = document.getElementById("season-episodes").getContext("2d");
 let ctxWeapons = document.getElementById("weapon-properties").getContext("2d");
 let ctxHandheld = document.getElementById("weapon-handheld").getContext("2d");
 
+let seasonsChart = new Chart(ctxSeasons, {
+  type: "line",
+  options: {
+    aspectRatio: 1,
+    tooltips: { mode: "nearest", intersect: false },
+    scales: {
+      yAxes: [
+        {
+          ticks: {
+            beginAtZero: true,
+          },
+          scaleLabel: {
+            display: true,
+            labelString: "Episodes",
+          },
+        },
+      ],
+      xAxes: [
+        {
+          scaleLabel: {
+            display: true,
+            labelString: "Season of Series",
+          },
+        },
+      ],
+    },
+  },
+});
+let weaponTechChart = new Chart(ctxWeapons, {
+  type: "bar",
+  options: {
+    aspectRatio: 1,
+    legend: {
+      position: "top",
+    },
+    scales: {
+      yAxes: [
+        {
+          ticks: {
+            beginAtZero: true,
+          },
+          scaleLabel: {
+            display: true,
+            labelString: "Weapon Models",
+          },
+        },
+      ],
+      xAxes: [
+        {
+          scaleLabel: {
+            display: true,
+            labelString: "Weapon Technologies",
+          },
+        },
+      ],
+    },
+  },
+});
+
+let weaponHandheldChart = new Chart(ctxHandheld, {
+  type: "pie",
+  options: {
+    aspectRatio: 1,
+    legend: {
+      position: "top",
+    },
+  },
+});
+
 const seriesDom = document.getElementById("series-table");
 
 /**
@@ -119,37 +188,10 @@ function makeSeasonsChart(seasonData, seriesData) {
     labels: new Array(maxSeasons).fill(0).map((n, i) => `Season ${i + 1}`),
   };
 
-  let config = {
-    type: "line",
-    data: chartData,
-    options: {
-      aspectRatio: 1,
-      tooltips: { mode: "nearest", intersect: false },
-      scales: {
-        yAxes: [
-          {
-            ticks: {
-              beginAtZero: true,
-            },
-            scaleLabel: {
-              display: true,
-              labelString: "Episodes",
-            },
-          },
-        ],
-        xAxes: [
-          {
-            scaleLabel: {
-              display: true,
-              labelString: "Season of Series",
-            },
-          },
-        ],
-      },
-    },
-  };
+  seasonsChart.config.data = chartData;
+  seasonsChart.update();
 
-  return new Chart(ctxSeasons, config);
+  return seasonsChart;
 }
 
 /**
@@ -236,39 +278,9 @@ async function setupWeapons() {
       datasets,
     };
 
-    let config = {
-      type: "bar",
-      data: chartData,
-      options: {
-        aspectRatio: 1,
-        legend: {
-          position: "top",
-        },
-        scales: {
-          yAxes: [
-            {
-              ticks: {
-                beginAtZero: true,
-              },
-              scaleLabel: {
-                display: true,
-                labelString: "Weapon Models",
-              },
-            },
-          ],
-          xAxes: [
-            {
-              scaleLabel: {
-                display: true,
-                labelString: "Weapon Technologies",
-              },
-            },
-          ],
-        },
-      },
-    };
-
-    new Chart(ctxWeapons, config);
+    weaponTechChart.data = chartData
+    weaponTechChart.update()
+    return weaponTechChart
   }
   makeWeaponsChart(weapons);
   //#endregion
@@ -293,18 +305,8 @@ async function setupWeapons() {
       ],
     };
 
-    let config = {
-      type: "pie",
-      data: chartData,
-      options: {
-        aspectRatio: 1,
-        legend: {
-          position: "top",
-        },
-      },
-    };
-
-    new Chart(ctxHandheld, config);
+    weaponHandheldChart.config.data = chartData
+    weaponHandheldChart.update()
   }
   //#endregion
 
