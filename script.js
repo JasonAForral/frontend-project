@@ -196,6 +196,8 @@ function makeSeasonsChart(seasonData, seriesData) {
 
   let index = 0;
 
+  seriesDom.firstElementChild.remove()
+
   for (let series of datasets) {
     // create dom elements
     let tr = document.createElement("tr");

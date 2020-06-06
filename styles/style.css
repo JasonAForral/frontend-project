@@ -14,7 +14,9 @@ body {
   background-color: #666;
 }
 
-
+.figure-caption {
+  color: #333 !important;
+}
 
 .filter-list > ul {
   list-style-type: none;
