@@ -64,6 +64,7 @@ let seasonsChart = new Chart(ctxSeasons, {
     },
   },
 });
+
 let weaponTechChart = new Chart(ctxWeapons, {
   type: "bar",
   options: {
@@ -80,14 +81,6 @@ let weaponTechChart = new Chart(ctxWeapons, {
           scaleLabel: {
             display: true,
             labelString: "Weapon Models",
-          },
-        },
-      ],
-      xAxes: [
-        {
-          scaleLabel: {
-            display: true,
-            labelString: "Weapon Technologies",
           },
         },
       ],
@@ -268,13 +261,13 @@ async function setupWeapons() {
     let keys = Object.keys(technologies);
 
     let datasets = keys.map((key, i) => ({
-      label: key,
+      label: key.slice(0, 1).toLocaleUpperCase() + key.slice(1,-10),
       data: [technologies[key]],
       backgroundColor: getFillColor(i),
     }));
 
     const chartData = {
-      labels: ["Weapon Technologies"],
+      labels: ["Technology"],
       datasets,
     };
 
