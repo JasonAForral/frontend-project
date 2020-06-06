@@ -36,6 +36,8 @@ let ctxSeasons = document.getElementById("season-episodes").getContext("2d");
 let ctxWeapons = document.getElementById("weapon-properties").getContext("2d");
 let ctxHandheld = document.getElementById("weapon-handheld").getContext("2d");
 
+const seriesDom = document.getElementById("series-table");
+
 /**
  * API caller function returns a promise with data
  * @param {string} query query information
@@ -49,33 +51,39 @@ async function callSTAPI(query) {
  * setup Seasons calls API for season information and displays on chart
  */
 async function setupSeasons() {
+  let seriesPromise = callSTAPI("series/search?sort=title,ASC");
   let results = await callSTAPI("season/search?sort=title,ASC");
-  return makeSeasonsChart(results.seasons);
+  let seriesResults = await seriesPromise;
+  console.log("series", seriesResults);
+  return makeSeasonsChart(results.seasons, seriesResults.series);
 }
 
 /**
  * make Seasons Chart
- * @param {Object} data Object containing season data to display on chart
+ * @param {Object} seasonData Object containing season data to display on chart
  */
-function makeSeasonsChart(data) {
+function makeSeasonsChart(seasonData, seriesData) {
+  console.log(seasonData);
   let maxSeasons = 0;
 
-  const datasets = data.reduce((acc, curr) => {
+  const datasets = seasonData.reduce((acc, curr) => {
     // get series title
-    const title = curr.series.title;
+    const series = seriesData.find((s) => s.uid === curr.series.uid);
+    const abbr = series.abbreviation;
 
     // check if title exists in the datasets
-    let index = acc.findIndex((item) => item.label === title);
+    let index = acc.findIndex((item) => item.label === abbr);
     if (index < 0) {
       // setup new series dataset
       index = acc.length;
       acc[index] = {
-        label: title,
+        label: abbr,
         data: [],
         borderColor: getFillColor(index),
 
         bacgroundColor: getFillColor(index),
         fill: false,
+        series,
       };
     }
 
@@ -88,6 +96,23 @@ function makeSeasonsChart(data) {
 
     return acc;
   }, []);
+
+  for (let series of datasets) {
+    let tr = document.createElement("tr");
+    let title = document.createElement("td");
+    let abbr = document.createElement("td");
+    let startDate = document.createElement("td");
+
+    const endDateText = series.series.originalRunEndDate;
+
+    title.textContent = series.series.title;
+    abbr.textContent = series.label;
+    startDate.textContent = new Date(
+      series.series.originalRunStartDate
+    ).toLocaleDateString();
+    tr.append(title, abbr, startDate);
+    seriesDom.append(tr);
+  }
 
   const chartData = {
     datasets,
