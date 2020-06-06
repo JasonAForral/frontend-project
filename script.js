@@ -35,6 +35,7 @@ function getFillColor(index) {
 let ctxSeasons = document.getElementById("season-episodes").getContext("2d");
 let ctxWeapons = document.getElementById("weapon-properties").getContext("2d");
 let ctxHandheld = document.getElementById("weapon-handheld").getContext("2d");
+let ctxTimeline = document.getElementById("timeline-chart").getContext("2d");
 
 // setup charts before API calls
 let seasonsChart = new Chart(ctxSeasons, {
@@ -99,6 +100,33 @@ let weaponHandheldChart = new Chart(ctxHandheld, {
   },
 });
 
+let timelineChart = new Chart(ctxTimeline, {
+  type: "line",
+  options: {
+    aspectRatio: 1,
+    scales: {
+      xAxes: [
+        {
+          type: "time",
+          time: {
+            displayFormats: {
+              quarter: "MMM YYYY",
+              max: new Date(),
+              min: "1966-10-02",
+            },
+          },
+          position: "bottom",
+        },
+      ],
+      yAxes: [
+        {
+          display: false,
+        },
+      ],
+    },
+  },
+});
+
 const seriesDom = document.getElementById("series-table");
 
 /**
@@ -117,7 +145,6 @@ async function setupSeasons() {
   let seriesPromise = callSTAPI("series/search?sort=title,ASC");
   let results = await callSTAPI("season/search?sort=title,ASC");
   let seriesResults = await seriesPromise;
-  console.log("series", seriesResults);
   return makeSeasonsChart(results.seasons, seriesResults.series);
 }
 
@@ -126,7 +153,6 @@ async function setupSeasons() {
  * @param {Object} seasonData Object containing season data to display on chart
  */
 function makeSeasonsChart(seasonData, seriesData) {
-  console.log(seasonData);
   let maxSeasons = 0;
 
   const datasets = seasonData.reduce((acc, curr) => {
@@ -143,9 +169,13 @@ function makeSeasonsChart(seasonData, seriesData) {
         label: abbr,
         data: [],
         borderColor: getFillColor(index),
-
-        bacgroundColor: getFillColor(index),
+        backgroundColor: getFillColor(index),
         fill: false,
+        startDate: new Date(series.originalRunStartDate),
+        // endDate may be null if it's still running
+        endDate: series.originalRunEndDate
+          ? new Date(series.originalRunEndDate)
+          : new Date(),
         series,
       };
     }
@@ -160,6 +190,12 @@ function makeSeasonsChart(seasonData, seriesData) {
     return acc;
   }, []);
 
+  let timelineDatasets = [];
+
+  datasets.sort((a, b) => a.startDate - b.startDate);
+
+  let index = 0;
+
   for (let series of datasets) {
     // create dom elements
     let tr = document.createElement("tr");
@@ -170,11 +206,27 @@ function makeSeasonsChart(seasonData, seriesData) {
     // fill table and append
     title.textContent = series.series.title;
     abbr.textContent = series.label;
-    startDate.textContent = new Date(
-      series.series.originalRunStartDate
-    ).toLocaleDateString();
+    startDate.textContent = series.startDate.toLocaleDateString();
     tr.append(title, abbr, startDate);
     seriesDom.append(tr);
+
+    timelineDatasets.push({
+      label: series.label,
+      data: [
+        {
+          x: series.startDate,
+          y: index,
+        },
+        {
+          x: series.endDate,
+          y: index,
+        },
+      ],
+      borderColor: getFillColor(index),
+      backgroundColor: getFillColor(index),
+      fill: false,
+    });
+    ++index;
   }
 
   const chartData = {
@@ -182,8 +234,16 @@ function makeSeasonsChart(seasonData, seriesData) {
     labels: new Array(maxSeasons).fill(0).map((n, i) => `Season ${i + 1}`),
   };
 
-  seasonsChart.config.data = chartData;
+  const timelineChartData = {
+    datasets: timelineDatasets,
+    labels: "abcdefghijklmno",
+  };
+
+  seasonsChart.data = chartData;
   seasonsChart.update();
+
+  timelineChart.data = timelineChartData;
+  timelineChart.update();
 
   return seasonsChart;
 }
@@ -299,7 +359,7 @@ async function setupWeapons() {
       ],
     };
 
-    weaponHandheldChart.config.data = chartData;
+    weaponHandheldChart.data = chartData;
     weaponHandheldChart.update();
   }
   //#endregion
