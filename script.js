@@ -36,6 +36,7 @@ let ctxSeasons = document.getElementById("season-episodes").getContext("2d");
 let ctxWeapons = document.getElementById("weapon-properties").getContext("2d");
 let ctxHandheld = document.getElementById("weapon-handheld").getContext("2d");
 
+// setup charts before API calls
 let seasonsChart = new Chart(ctxSeasons, {
   type: "line",
   options: {
@@ -160,13 +161,13 @@ function makeSeasonsChart(seasonData, seriesData) {
   }, []);
 
   for (let series of datasets) {
+    // create dom elements
     let tr = document.createElement("tr");
     let title = document.createElement("td");
     let abbr = document.createElement("td");
     let startDate = document.createElement("td");
 
-    const endDateText = series.series.originalRunEndDate;
-
+    // fill table and append
     title.textContent = series.series.title;
     abbr.textContent = series.label;
     startDate.textContent = new Date(
@@ -230,6 +231,7 @@ async function setupWeapons() {
       acc.handHeldWeapon += curr.handHeldWeapon;
       acc.mirror += curr.mirror;
 
+      // tally weapons with more than one technology
       const numTech =
         curr.laserTechnology +
         curr.phaserTechnology +
@@ -251,9 +253,8 @@ async function setupWeapons() {
       return acc;
     }, aggregateData);
 
-    let technologies = {};
-
     // filter keys that include technology
+    let technologies = {};
     for (let key in aggregateData) {
       if (key.indexOf("Technology") > 0) technologies[key] = aggregateData[key];
     }
@@ -261,7 +262,7 @@ async function setupWeapons() {
     let keys = Object.keys(technologies);
 
     let datasets = keys.map((key, i) => ({
-      label: key.slice(0, 1).toLocaleUpperCase() + key.slice(1,-10),
+      label: key.slice(0, 1).toLocaleUpperCase() + key.slice(1, -10),
       data: [technologies[key]],
       backgroundColor: getFillColor(i),
     }));
@@ -271,9 +272,9 @@ async function setupWeapons() {
       datasets,
     };
 
-    weaponTechChart.data = chartData
-    weaponTechChart.update()
-    return weaponTechChart
+    weaponTechChart.data = chartData;
+    weaponTechChart.update();
+    return weaponTechChart;
   }
   makeWeaponsChart(weapons);
   //#endregion
@@ -298,8 +299,8 @@ async function setupWeapons() {
       ],
     };
 
-    weaponHandheldChart.config.data = chartData
-    weaponHandheldChart.update()
+    weaponHandheldChart.config.data = chartData;
+    weaponHandheldChart.update();
   }
   //#endregion
 
